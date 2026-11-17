@@ -9,7 +9,7 @@ pub struct Point {
 
 unsafe extern "C" {
     fn add(a: c_int, b: c_int) -> c_int;
-    fn point_length(p: Point) -> c_double;
+    fn point_magnitude(p: Point) -> c_double;
     fn point_scale(p: *mut Point, factor: c_double);
 }
 
@@ -20,9 +20,9 @@ pub fn safe_add(a: i32, b: i32) -> i32 {
 }
 
 impl Point {
-    pub fn length(self) -> f64 {
+    pub fn magnitude(self) -> f64 {
         // SAFETY: `Point` is #[repr(C)] and passed by value.
-        unsafe { point_length(self) }
+        unsafe { point_magnitude(self) }
     }
 
     pub fn scale(&mut self, factor: f64) {
@@ -35,8 +35,8 @@ fn main() {
     println!("add(2, 40)   = {}", safe_add(2, 40));
 
     let mut p = Point { x: 3.0, y: 4.0 };
-    println!("{p:?} length = {}", p.length());
+    println!("{p:?} magnitude = {}", p.magnitude());
 
     p.scale(2.0);
-    println!("{p:?} length = {}", p.length());
+    println!("{p:?} magnitude = {}", p.magnitude());
 }

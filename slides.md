@@ -99,7 +99,7 @@ nm --demangle build/decoded.o | grep ' T '
 
 * The **parameter types** are baked into every C++ symbol name
 * The scheme is compiler-specific: Itanium here, something else on MSVC
-* `c_add` is just `c_add`. **That** is the door Rust can knock on
+* Whereas `c_add` is just `c_add`. That's what Rust can use
 
 Rust calling C, by hand
 ===
@@ -189,7 +189,7 @@ start_line: 16
 end_line: 32
 ```
 
-The idiom: a **small unsafe core**, a **safe API** around it.
+The idiomatic way: a small unsafe core and a safe API around it.
 
 Using it: ordinary Rust
 ===
@@ -201,19 +201,14 @@ start_line: 34
 end_line: 42
 ```
 
-No `unsafe` in `main`. The caller cannot tell there is C underneath.
-
-Demo: build it by hand, no cargo
-===
-
 ```bash +exec +validate +id:byhand
-cd demos/02-rust-calls-c
-cc -c -fPIC c/mathlib.c -o build/mathlib.o    # 1. compile the C
-ar rcs build/libmathlib.a build/mathlib.o     # 2. pack a static library
-rustc --edition 2024 src/main.rs -o build/main \
-    -L build -l static=mathlib                # 3. compile Rust, link both
+cd demos/02-rust-calls-c && cc -c -fPIC c/mathlib.c -o build/mathlib.o
+ar rcs build/libmathlib.a build/mathlib.o
+rustc --edition 2024 src/main.rs -o build/main -L build -l static=mathlib
 build/main
 ```
+
+<!-- snippet_output: byhand -->
 
 <!-- incremental_lists: false -->
 <!--
@@ -429,7 +424,7 @@ f=$(ls -t target/debug/build/bindgen-demo-*/out/bindings.rs | head -1)
 rustfmt --config max_width=72 < $f | sed -n '/^unsafe extern/,$p'
 ```
 
-The same declarations as our hand-written ones, minus the typos.
+The same declarations as our hand-written ones.
 
 Demo: same program, less code
 ===
@@ -492,7 +487,7 @@ cxx: the same `WordCounter`, no shim
 path: demos/08-cxx/src/main.rs
 language: rust
 start_line: 3
-end_line: 16
+end_line: 15
 ```
 
 The C++ class is used **as is**. All the glue we still write:
@@ -510,7 +505,7 @@ Using it from Rust
 ```file
 path: demos/08-cxx/src/main.rs
 language: rust
-start_line: 18
+start_line: 17
 end_line: 32
 ```
 
@@ -537,7 +532,7 @@ nm target/debug/cxx-demo | grep -E ' t cxxbridge1.*(WordCounter|word_c)'
 
 Plain, unmangled C symbols: the same `extern "C"` shims we wrote by hand.
 
-These tools do not replace the C ABI. They **automate it** and **make it safe**.
+These tools automate a good amount of the grunt work.
 
 Which tool do I reach for?
 ===
@@ -547,9 +542,8 @@ Which tool do I reach for?
 | You have...                          | Reach for            |
 |--------------------------------------|----------------------|
 | A **C library** to call from Rust    | **bindgen**          |
-| **Rust** to expose to C or C++       | **cbindgen**         |
 | Real **two-way C++** interop         | **cxx** or **zngur** |
-| A small surface, or a wish to learn  | **by hand**          |
+| A small surface, or a wish to suffer | **by hand**          |
 
 <!-- new_lines: 2 -->
 

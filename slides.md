@@ -568,4 +568,4 @@ Questions?
 
 Every snippet in this talk ran live from the `demos/` directory.
 
-Slides and demos: **TODO: link to the demo repo**
+Slides and demos: <https://github.com/RMPR/rust-ffi-with-cpp>

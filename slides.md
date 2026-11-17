@@ -9,6 +9,10 @@ theme:
     code:
       minimum_margin:
         percent: 1
+    execution_output:
+      padding:
+        horizontal: 2
+        vertical: 0
 options:
   implicit_slide_ends: true
   incremental_lists: true
@@ -137,45 +141,6 @@ end_line: 14
 * `"C"`: is the calling convention
 * `core::ffi` types, because `i32` is not *guaranteed* to be C's `int`
 
-C types are platform types
-===
-
-```rust +exec +validate
-# #![allow(unused_comparisons)]
-use core::ffi::{c_char, c_int, c_long};
-
-fn main() {
-    println!("c_int   = {} bytes", size_of::<c_int>());
-    println!("c_long  = {} bytes", size_of::<c_long>());
-    println!("c_char is signed: {}", c_char::MIN < 0);
-}
-```
-
-<!-- pause -->
-
-* `c_long` is 8 bytes on Linux and macOS, **4 on 64-bit Windows**
-* `c_char` is `i8` on x86, **`u8` on ARM Linux**
-* That's why one should use `c_*` types for FFI
-
-Why `#[repr(C)]`
-===
-
-Rust is free to reorder fields. C is not.
-
-```rust +exec +validate
-# #![allow(dead_code)]
-struct Rusty { a: u8, b: u32, c: u8 }
-
-#[repr(C)]
-struct LikeC { a: u8, b: u32, c: u8 }
-
-fn main() {
-    println!("default layout: {} bytes", size_of::<Rusty>());
-    println!("#[repr(C)]:     {} bytes", size_of::<LikeC>());
-}
-```
-
-Without `#[repr(C)]`, C can read the wrong fields, or even read past the end of the struct.
 
 `unsafe`, and the safe wrapper
 ===
@@ -224,7 +189,7 @@ build/main
 Calling C++ from Rust, by hand
 ===
 
-Let's take this class:
+Let's take the following snippet:
 
 ```file
 path: demos/04-cpp-class-shim/cpp/word_counter.hpp
@@ -328,10 +293,10 @@ The edges the compiler cannot see
 ===
 
 * **Exceptions**: a C++ exception must never unwind into Rust.
-* **Null pointers**: every pointer coming in may be null. Check, or document
+* **Null pointers**: every pointer coming in can be null
 * **Lifetimes**: C keeps your pointer for as long as it likes
 * **Aliasing**: `&mut T` promises exclusivity. C made no such promise
-* **Threads**: Rust can't tell if the C++ is thread-safe. `Send` and `Sync` become your promise
+* **Threads**: Rust can't tell if the C++ is thread-safe. `Send` and `Sync` become your responsibility. 
 
 <!-- pause -->
 <!-- new_lines: 2 -->
@@ -371,6 +336,9 @@ language: rust
 start_line: 3
 end_line: 19
 ```
+
+What cargo now does for us
+===
 
 After that we no longer type, or forget:
 
@@ -438,16 +406,13 @@ end_line: 4
 
 ```bash +exec +validate
 cd demos
-wc -l 02-rust-calls-c/src/main.rs 06-bindgen/src/main.rs
 cargo run --quiet -p bindgen-demo
 ```
-
-Declarations are generated. **Safety is still your job.**
 
 bindgen and C++
 ===
 
-Great for C APIs. So-so for C++:
+Bindgen is great for C APIs, but not so great for C++:
 
 * **Templates**: only concrete instantiations, and often only as opaque blobs
 * **STL types**: `std::string`, `std::vector` have no stable layout to bind
@@ -457,30 +422,11 @@ Great for C APIs. So-so for C++:
 <!-- pause -->
 <!-- new_line -->
 
-If the header is C++-heavy, wrap it in a C shim first, or use a C++-aware tool.
-
-
-The wider landscape
-===
-
-| Tool         | What it is                      | Link                                        |
-|--------------|---------------------------------|---------------------------------------------|
-| **cxx**      | Safe two-way bridge             | <https://cxx.rs>                            |
-| **autocxx**  | bindgen + cxx, from C++ headers | <https://github.com/google/autocxx>         |
-| **zngur**    | Rust APIs, idiomatic in C++     | <https://hkalbasi.github.io/zngur/>         |
-| **crubit**   | Google's two-way interop        | <https://github.com/google/crubit>          |
-| **cxx-qt**   | cxx for Qt                      | <https://github.com/KDAB/cxx-qt>            |
-| **diplomat** | One Rust API, many languages    | <https://github.com/rust-diplomat/diplomat> |
-
-<!-- new_line -->
-
-Also moving: the Rust Foundation's **C++ interop initiative**
-
-<https://rustfoundation.org/interop-initiative/>
+If the header is C++-heavy, just use a C++-aware tool.
 
 <!-- speaker_note: Section 7, 6 minutes. -->
 
-cxx: the same `WordCounter`, no shim
+cxx: the same `WordCounter`
 ===
 
 ```file
@@ -490,7 +436,10 @@ start_line: 3
 end_line: 15
 ```
 
-The C++ class is used **as is**. All the glue we still write:
+The C++ class is used **as is**: no shim, no opaque pointer.
+
+All the C++ glue that is left
+===
 
 ```file
 path: demos/08-cxx/include/factory.h
@@ -511,7 +460,7 @@ end_line: 32
 
 No `unsafe`, no `CString`, no `Drop`. The C++ exception arrives as an `Err`.
 
-Demo: same program, a third of the code
+Demo: same program but less boilerplate
 ===
 
 ```bash +exec +validate
@@ -533,6 +482,25 @@ nm target/debug/cxx-demo | grep -E ' t cxxbridge1.*(WordCounter|word_c)'
 Plain, unmangled C symbols: the same `extern "C"` shims we wrote by hand.
 
 These tools automate a good amount of the grunt work.
+
+
+The wider landscape
+===
+
+| Tool         | What it is                       |
+|--------------|----------------------------------|
+| **cxx**      | Safe two-way bridge              |
+| **autocxx** (archived)  | bindgen + cxx, from C++ headers  |
+| **zngur**    | Rust APIs, idiomatic in C++      |
+| **crubit**   | Google's two-way interop         |
+| **cxx-qt**   | cxx for Qt                       |
+| **diplomat** | One Rust API, many languages     |
+
+<!-- new_line -->
+
+Also moving: the Rust Foundation's **C++ interop initiative**
+
+<https://rustfoundation.org/interop-initiative/>
 
 Which tool do I reach for?
 ===

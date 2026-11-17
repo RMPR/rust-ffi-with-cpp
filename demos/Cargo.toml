@@ -1,0 +1,16 @@
+[workspace]
+resolver = "3"
+members = [
+    "02-rust-calls-c",
+    "03-cpp-calls-rust",
+    "04-cpp-class-shim",
+    "05-sharp-edges",
+    "06-bindgen",
+    "07-cbindgen",
+    "08-cxx",
+]
+
+[workspace.package]
+edition = "2024"
+version = "0.1.0"
+publish = false

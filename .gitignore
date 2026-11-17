@@ -1,0 +1,23 @@
+# Rust / cargo (the demos workspace keeps its own ignores in demos/.gitignore)
+target/
+
+# Objects and binaries from the by-hand demo builds
+*.o
+*.a
+*.so
+
+# Editors and OS
+.vscode/
+.idea/
+.zed/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# presenterm exports
+*.pdf
+slides.html
+
+# Node, in case mermaid-cli is ever installed locally
+node_modules/

@@ -1,0 +1,19 @@
+# presenterm configuration for this talk. Used via `presenterm -c config.yaml`.
+snippet:
+  exec:
+    enable: true
+    custom:
+      # Same as the built-in bash executor, but stop at the first failing
+      # command, so a broken demo can never look like a passing one.
+      bash:
+        filename: script.sh
+        commands:
+          - ["bash", "-eo", "pipefail", "$pwd/script.sh"]
+      # Same as the built-in rust executor, but on the 2024 edition.
+      rust:
+        filename: snippet.rs
+        hidden_line_prefix: "# "
+        commands:
+          - ["rustc", "--edition", "2024", "--crate-name", "presenterm_snippet",
+             "$pwd/snippet.rs", "-o", "$pwd/snippet", "--color", "always"]
+          - ["$pwd/snippet"]

@@ -1,0 +1,5 @@
+[package]
+name = "cpp-class-shim"
+edition.workspace = true
+version.workspace = true
+publish.workspace = true

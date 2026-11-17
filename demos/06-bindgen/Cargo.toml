@@ -1,0 +1,9 @@
+[package]
+name = "bindgen-demo"
+edition.workspace = true
+version.workspace = true
+publish.workspace = true
+
+[build-dependencies]
+bindgen = "0.72"
+cc = "1"

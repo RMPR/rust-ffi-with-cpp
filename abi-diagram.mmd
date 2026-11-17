@@ -1,0 +1,15 @@
+%%{init: {"themeCSS": ".edgeLabel, .edgeLabel p, .edgeLabel rect, .labelBkg { background: transparent !important; background-color: transparent !important; fill: transparent !important; }", "flowchart": {"rankSpacing": 150, "nodeSpacing": 40, "padding": 14}, "themeVariables": {"fontSize": "26px", "edgeLabelBackground": "transparent"}}}%%
+flowchart LR
+    R["<div style='width:170px'><b>Rust</b></div>"]
+    C(["<div style='width:170px'><b>C ABI</b></div>"])
+    P["<div style='width:170px'><b>C++</b></div>"]
+    R <==>|"<div style='width:50px;height:2px'></div>"| C
+    C <==>|"<div style='width:50px;height:2px'></div>"| P
+
+    classDef rustNode fill:#45302a,stroke:#fab387,stroke-width:3px,color:#fab387
+    classDef cppNode fill:#263349,stroke:#89b4fa,stroke-width:3px,color:#89b4fa
+    classDef abiNode fill:#3a3a22,stroke:#f9e2af,stroke-width:3px,color:#f9e2af
+    class R rustNode
+    class P cppNode
+    class C abiNode
+    linkStyle default stroke:#a6adc8,stroke-width:3px

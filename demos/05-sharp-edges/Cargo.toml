@@ -1,0 +1,8 @@
+[package]
+name = "sharp-edges"
+edition.workspace = true
+version.workspace = true
+publish.workspace = true
+
+[lib]
+crate-type = ["staticlib"]

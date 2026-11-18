@@ -9,11 +9,17 @@ or is a snippet that runs live.
 Run everything **from this directory**: snippets use paths relative to it.
 
 ```sh
-make present   # pre-builds the demos, then starts the talk
+make present   # pre-builds the demos, starts the talk, opens speaker notes
+make notes     # speaker notes only, if you want to open that window yourself
 make dev       # edit mode: validates snippets and slide overflow on each reload
 ```
 
 During the talk, `Ctrl+E` runs the snippet on the current slide.
+
+`make present` opens the speaker notes in a second Ghostty window that follows
+the presenting one; put it on your laptop screen and the talk on the projector.
+Use `make present NOTES=0` to skip it. Notes are the `<!-- speaker_note: -->`
+lines in `slides.md`.
 
 Needs: `presenterm` (0.16+), a Rust toolchain (2024 edition), a C/C++
 compiler, `ar`, `nm`, and libclang (for bindgen).

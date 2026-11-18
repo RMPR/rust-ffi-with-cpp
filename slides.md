@@ -34,7 +34,6 @@ Why mix Rust and C++ at all?
 
 <!--
 speaker_note: |
-  Section 1, 3 minutes.
   Next: What FFI actually is  [bullets: Calling convention, Data layout, Symbol names]
 -->
 
@@ -55,7 +54,6 @@ Source language can be different, but compiled code only has to agree on the
 
 <!--
 speaker_note: |
-  Section 2, 5 minutes.
   Next: The C ABI is the lingua franca  [diagram | bullets: Name mangling, Templates, Exceptions, No stable ABI]
 -->
 
@@ -146,7 +144,6 @@ From the Rust side we must:
 
 <!--
 speaker_note: |
-  Section 3, 8 minutes.
   Next: Declaring the foreign side  [code: mathlib.h | code: main.rs | 3 bullets]
 -->
 
@@ -474,7 +471,6 @@ blocks and `#[repr(C)]` structs for you.
 
 <!--
 speaker_note: |
-  Section 6, 7 minutes.
   Next: bindgen in build.rs  [code: build.rs]
 -->
 
@@ -520,6 +516,21 @@ The same declarations as our hand-written ones.
 
 <!--
 speaker_note: |
+  Next: Using the bindings: one include!  [code: main.rs]
+-->
+
+Using the bindings: one `include!`
+===
+
+```file
+path: demos/06-bindgen/src/main.rs
+language: rust
+start_line: 1
+end_line: 21
+```
+
+<!--
+speaker_note: |
   Next: Demo: same program, less code  [code: main.rs | DEMO, Ctrl+E]
 -->
 
@@ -529,8 +540,8 @@ Demo: same program, less code
 ```file
 path: demos/06-bindgen/src/main.rs
 language: rust
-start_line: 1
-end_line: 3
+start_line: 23
+end_line: 31
 ```
 
 ```bash +exec +validate
@@ -560,7 +571,6 @@ If the header is C++-heavy, just use a C++-aware tool.
 
 <!--
 speaker_note: |
-  Section 7, 6 minutes.
   Next: cxx: WordCounter  [code: main.rs | code: factory.h]
 -->
 
@@ -680,7 +690,6 @@ Whatever tool you pick, you now know what happens under the hood:
 
 <!--
 speaker_note: |
-  Section 8, 5 minutes including questions.
   Next: Questions?
 -->
 

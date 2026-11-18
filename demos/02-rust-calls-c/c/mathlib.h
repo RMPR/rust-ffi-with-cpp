@@ -8,6 +8,6 @@ typedef struct {
 
 int add(int a, int b);
 double point_magnitude(Point p);
-void point_scale(Point *p, double factor);
+void point_scale(Point *p, double k);
 
 #endif

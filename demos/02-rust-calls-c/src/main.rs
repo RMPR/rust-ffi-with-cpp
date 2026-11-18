@@ -10,7 +10,7 @@ pub struct Point {
 unsafe extern "C" {
     fn add(a: c_int, b: c_int) -> c_int;
     fn point_magnitude(p: Point) -> c_double;
-    fn point_scale(p: *mut Point, factor: c_double);
+    fn point_scale(p: *mut Point, k: c_double);
 }
 
 // Safe wrappers: the `unsafe` stays in one small, auditable place.

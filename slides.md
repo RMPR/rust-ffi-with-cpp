@@ -105,7 +105,7 @@ nm --demangle build/decoded.o | grep ' T '
 * The scheme is compiler-specific: Itanium here, something else on MSVC
 * Whereas `c_add` is just `c_add`. That's what Rust can use
 
-Rust calling C, by hand
+Calling C from Rust
 ===
 
 Let's say we want to use the following C library:
@@ -130,12 +130,31 @@ From the Rust side we must:
 Declaring the foreign side
 ===
 
+<!-- column_layout: [5, 6] -->
+
+<!-- column: 0 -->
+
+**C**: what the library declares
+
+```file
+path: demos/02-rust-calls-c/c/mathlib.h
+language: c
+start_line: 4
+end_line: 11
+```
+
+<!-- column: 1 -->
+
+**Rust**: what we write to match it
+
 ```file
 path: demos/02-rust-calls-c/src/main.rs
 language: rust
-start_line: 1
+start_line: 3
 end_line: 14
 ```
+
+<!-- reset_layout -->
 
 * `unsafe extern`: **required** in the 2024 edition, optional before
 * `"C"`: is the calling convention
@@ -186,7 +205,7 @@ build/main
 | `--edition 2024`      | `rustc` alone defaults to the 2015 edition      |
 -->
 
-Calling C++ from Rust, by hand
+Calling C++ from Rust
 ===
 
 Let's take the following snippet:
@@ -267,7 +286,7 @@ start_line: 69
 end_line: 79
 ```
 
-Build and run: still no cargo
+Build and run
 ===
 
 ```bash +exec +validate
@@ -292,11 +311,11 @@ The pattern: an hourglass
 The edges the compiler cannot see
 ===
 
-* **Exceptions**: a C++ exception must never unwind into Rust.
+* **Exceptions**: a C++ exception must never unwind into Rust
 * **Null pointers**: every pointer coming in can be null
-* **Lifetimes**: C keeps your pointer for as long as it likes
-* **Aliasing**: `&mut T` promises exclusivity. C made no such promise
-* **Threads**: Rust can't tell if the C++ is thread-safe. `Send` and `Sync` become your responsibility. 
+* **Lifetimes**: C++ keeps your pointer for as long as it likes
+* **Aliasing**: `&mut T` promises exclusivity, C++ made no such promise
+* **Threads**: Rust can't tell if the C++ is thread-safe. `Send`/`Sync` become your responsibility. 
 
 <!-- pause -->
 <!-- new_lines: 2 -->
@@ -333,20 +352,17 @@ You do have to write a `build.rs` though
 ```file
 path: demos/02-rust-calls-c/build.rs
 language: rust
-start_line: 3
-end_line: 19
+start_line: 4
+end_line: 15
 ```
-
-What cargo now does for us
-===
 
 After that we no longer type, or forget:
 
 * The compile and archive steps, **re-run only when the C changes**
 * `-L` and `-l`, passed to `rustc` for us
-* The edition, the output paths, debug vs. release
+* The edition, the output paths, debug vs release
 
-bindgen
+But you can also use bindgen
 ===
 
 Reads C (and some C++) headers through **libclang**, and writes the `extern`
@@ -378,8 +394,7 @@ bindgen's output: the struct, with layout checks
 ```bash +exec +validate
 cd demos
 cargo build --quiet -p bindgen-demo
-f=$(ls -t target/debug/build/bindgen-demo-*/out/bindings.rs | head -1)
-rustfmt --config max_width=72 < $f | sed -n '/repr(C)/,/^};/p'
+06-bindgen/show-bindings.sh struct
 ```
 
 bindgen's output: the functions
@@ -388,8 +403,7 @@ bindgen's output: the functions
 ```bash +exec +validate
 cd demos
 cargo build --quiet -p bindgen-demo
-f=$(ls -t target/debug/build/bindgen-demo-*/out/bindings.rs | head -1)
-rustfmt --config max_width=72 < $f | sed -n '/^unsafe extern/,$p'
+06-bindgen/show-bindings.sh functions
 ```
 
 The same declarations as our hand-written ones.
@@ -401,7 +415,7 @@ Demo: same program, less code
 path: demos/06-bindgen/src/main.rs
 language: rust
 start_line: 1
-end_line: 4
+end_line: 3
 ```
 
 ```bash +exec +validate
@@ -426,25 +440,22 @@ If the header is C++-heavy, just use a C++-aware tool.
 
 <!-- speaker_note: Section 7, 6 minutes. -->
 
-cxx: the same `WordCounter`
+cxx: `WordCounter`
 ===
 
 ```file
 path: demos/08-cxx/src/main.rs
 language: rust
-start_line: 3
-end_line: 15
+start_line: 1
+end_line: 13
 ```
 
-The C++ class is used **as is**: no shim, no opaque pointer.
-
-All the C++ glue that is left
-===
+Only C++ glue left: the constructor
 
 ```file
 path: demos/08-cxx/include/factory.h
 language: cpp
-start_line: 7
+start_line: 8
 end_line: 10
 ```
 
@@ -454,8 +465,8 @@ Using it from Rust
 ```file
 path: demos/08-cxx/src/main.rs
 language: rust
-start_line: 17
-end_line: 32
+start_line: 15
+end_line: 30
 ```
 
 No `unsafe`, no `CString`, no `Drop`. The C++ exception arrives as an `Err`.
@@ -479,9 +490,9 @@ nm target/debug/cxx-demo | grep -E ' t cxxbridge1.*(WordCounter|word_c)'
 
 <!-- pause -->
 
-Plain, unmangled C symbols: the same `extern "C"` shims we wrote by hand.
+Those sure look a tad bit like the `extern "C"` shims we wrote by hand.
 
-These tools automate a good amount of the grunt work.
+These tools can automate a good amount of the grunt work.
 
 
 The wider landscape
@@ -507,18 +518,18 @@ Which tool do I reach for?
 
 <!-- incremental_lists: false -->
 
-| You have...                          | Reach for            |
-|--------------------------------------|----------------------|
-| A **C library** to call from Rust    | **bindgen**          |
-| Real **two-way C++** interop         | **cxx** or **zngur** |
-| A small surface, or a wish to suffer | **by hand**          |
+| You have...                            | Reach for                     |
+|----------------------------------------|-------------------------------|
+| A **C library** to call from Rust      | **bindgen**                   |
+| Real **two-way C++** interop           | **cxx** or **zngur**          |
+| A small surface, or a desire to suffer | **nothing**: write it by hand |
 
 <!-- new_lines: 2 -->
 
-Whatever you pick, you now know what it does for you:
+Whatever tool you pick, you now know what happens under the hood:
 
-* Declares the symbols, matches the layouts, links the code
-* Decides who owns what, and keeps panics and exceptions on their own side
+* Symbols declaration, layout matching, linking, ...
+* Ownership decision, and panic/exception boundaries
 
 <!-- speaker_note: Section 8, 5 minutes including questions. -->
 

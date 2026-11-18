@@ -1,5 +1,3 @@
-use cxx::let_cxx_string;
-
 #[cxx::bridge]
 mod ffi {
     unsafe extern "C++" {
@@ -18,15 +16,15 @@ fn main() -> Result<(), cxx::Exception> {
     let mut counter = ffi::new_word_counter();
     let text = "the quick brown fox jumps over the lazy dog the end";
     for word in text.split(' ') {
-        let_cxx_string!(word = word);
+        cxx::let_cxx_string!(word = word);
         counter.pin_mut().add(&word)?;
     }
 
-    let_cxx_string!(the = "the");
+    cxx::let_cxx_string!(the = "the");
     println!("'the' appears {} times", counter.count(&the));
     println!("{} distinct words", counter.distinct());
 
-    let_cxx_string!(empty = "");
+    cxx::let_cxx_string!(empty = "");
     println!("adding \"\": {:?}", counter.pin_mut().add(&empty));
     Ok(())
 } // UniquePtr dropped here: the C++ destructor runs

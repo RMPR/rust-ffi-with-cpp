@@ -1,4 +1,3 @@
-// All hand-written `extern` declarations and the `Point` struct are gone.
 mod ffi {
     include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
 }

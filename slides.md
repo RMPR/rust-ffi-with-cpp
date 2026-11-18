@@ -67,7 +67,7 @@ C++ is hard because it has things that neither Rust nor the C ABI can express:
 
 <!-- pause -->
 
-"Rust ↔ C++" nearly always means **Rust ↔ C ↔ C++**.
+But "Rust ↔ C++" nearly always means **Rust ↔ C ↔ C++**.
 
 Seeing it: mangled vs. unmangled symbols
 ===

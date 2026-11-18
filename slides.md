@@ -648,7 +648,6 @@ The wider landscape
 | **zngur**    | Rust APIs, idiomatic in C++      |
 | **crubit**   | Google's two-way interop         |
 | **cxx-qt**   | cxx for Qt                       |
-| **diplomat** | One Rust API, many languages     |
 
 <!-- new_line -->
 

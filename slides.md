@@ -26,9 +26,6 @@ Why mix Rust and C++ at all?
 
 * **Mature libraries**: e.g. Qt
 
-[Recommended
-reading](https://daniel.haxx.se/blog/2026/11/17/actual-curl-rewrites-in-rust/)
-
 <!-- pause -->
 <!-- new_lines: 2 -->
 
